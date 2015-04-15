@@ -14,19 +14,23 @@ data = np.loadtxt(statsFile, delimiter='\t', usecols=(0, 5, 6, 7, 8), \
                   converters={0: strpdate2num('%Y-%m-%dT%H:%M:%S')})
 
 fig = plt.figure()
-ax = fig.add_subplot(111)
+ax1 = fig.add_subplot(111)
 
-ax.plot(data[:, 0], data[:, 3], marker='.', label='Download')
-ax.plot(data[:, 0], data[:, 4], marker='.', label='Upload')
+ax1.plot(data[:, 0], data[:, 3], marker='.', label='Download')
+ax1.plot(data[:, 0], data[:, 4], marker='.', label='Upload')
 
 autoDL = AutoDateLocator()
 autoDF = AutoDateFormatter(autoDL)
 
-ax.xaxis.set_major_locator(autoDL)
-ax.xaxis.set_major_formatter(autoDF)
+ax1.xaxis.set_major_locator(autoDL)
+ax1.xaxis.set_major_formatter(autoDF)
 
 fig.autofmt_xdate()
-ax.set_ylabel('speed (Mbit/s)')
-ax.legend(loc=0)
+ax1.set_ylabel('speed (Mbit/s)')
+ax1.legend(loc=0)
+
+#ax2 = ax1.twinx()
+#ax2.plot(data[:, 0], data[:, 2], color='r', marker='.', label='Latency')
+#ax2.set_ylabel('latency (ms)')
 
 plt.show()
