@@ -33,4 +33,6 @@ ax1.legend(loc=0)
 #ax2.plot(data[:, 0], data[:, 2], color='r', marker='.', label='Latency')
 #ax2.set_ylabel('latency (ms)')
 
+plt.savefig('speedtest_stats.pdf')
+
 plt.show()
