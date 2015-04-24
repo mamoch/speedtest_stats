@@ -25,6 +25,33 @@ autoDF = AutoDateFormatter(autoDL)
 ax1.xaxis.set_major_locator(autoDL)
 ax1.xaxis.set_major_formatter(autoDF)
 
+startTime = data[0, 0]
+endTime = data[-1, 0]
+
+##################################################
+# statistics
+down_mean = np.trapz(data[:, 3], data[:, 0])/(endTime - startTime)
+up_mean = np.trapz(data[:, 4], data[:, 0])/(endTime - startTime)
+
+down_max = np.max(data[:, 3])
+up_max = np.max(data[:, 4])
+
+down_min = np.min(data[:, 3])
+up_min = np.min(data[:, 4])
+
+plt.plot([startTime, endTime], [down_mean, down_mean], label=r'$\langle \Downarrow \rangle$')
+plt.plot([startTime, endTime], [up_mean, up_mean], label=r'$\langle \Uparrow \rangle$')
+
+plt.annotate( \
+    r'$\langle \Downarrow \rangle=' + '{:.1f}'.format(down_mean) + r'\,\rm{Mbit/s}$' + '\n' + \
+    r'$\Downarrow_{+}=' + '{:.1f}'.format(down_max) + r'\,\rm{Mbit/s}$' + '\n' + \
+    r'$\Downarrow_{-}=' + '{:.1f}'.format(down_min) + r'\,\rm{Mbit/s}$' + '\n\n' + \
+    r'$\langle \Uparrow \rangle=' + '{:.1f}'.format(up_mean) + r'\,\rm{Mbit/s}$' + '\n' + \
+    r'$\Uparrow_{+}=' + '{:.1f}'.format(up_max) + r'\,\rm{Mbit/s}$' + '\n' + \
+    r'$\Uparrow_{-}=' + '{:.1f}'.format(up_min) + r'\,\rm{Mbit/s}$', \
+    (1.02, 0.66), xycoords='axes fraction', verticalalignment='top')
+##################################################
+
 fig.autofmt_xdate()
 ax1.set_ylabel('speed (Mbit/s)')
 ax1.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
