@@ -2,7 +2,8 @@
 
 import numpy as np
 import matplotlib.pylab as plt
-from matplotlib.dates import strpdate2num, AutoDateLocator, AutoDateFormatter
+from matplotlib.dates import strpdate2num, date2num, num2date, AutoDateLocator, AutoDateFormatter
+from datetime import datetime, timedelta
 import ConfigParser
 
 cfgPars  = ConfigParser.RawConfigParser()
@@ -10,8 +11,31 @@ cfgPars.read('speedtest.cfg')
 
 statsFile = cfgPars.get('Stats file', 'statsFile')
 
-data = np.loadtxt(statsFile, delimiter='\t', usecols=(0, 5, 6, 7, 8), \
+all_data = np.loadtxt(statsFile, delimiter='\t', usecols=(0, 5, 6, 7, 8), \
                   converters={0: strpdate2num('%Y-%m-%dT%H:%M:%S')})
+
+# sort data by date ascending
+all_data = all_data[np.argsort(all_data[:, 0])]
+
+plotDays = cfgPars.getint('Plotting', 'plotLastDays')
+
+if plotDays == 0:
+    data = all_data
+else:
+    if plotDays == -1:
+        # use the start and stop from config
+        startPoint = date2num(datetime.strptime(cfgPars.get('Plotting', 'plotStart'), \
+            '%Y-%m-%dT%H:%M:%S'))
+        stopPoint = date2num(datetime.strptime(cfgPars.get('Plotting', 'plotStop'), \
+            '%Y-%m-%dT%H:%M:%S'))
+    else:
+        # calculate start from now backwards
+        timeDiff = timedelta(days=plotDays)
+        last = num2date(all_data[-1, 0])
+        startPoint = date2num(last - timeDiff)
+        stopPoint = date2num(last)
+    # select data within [startPoint, stopPoint]
+    data = all_data[np.where(np.logical_and(all_data[:, 0] >= startPoint, all_data[:, 0] <= stopPoint))]
 
 fig = plt.figure()
 ax1 = fig.add_axes([0.13, 0.13, 0.68, 0.8])
