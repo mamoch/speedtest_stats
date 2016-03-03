@@ -15,7 +15,10 @@ statsFile = cfgPars.get('Stats file', 'statsFile')
 sysStdout_old = sys.stdout
 sys.stdout = stringio = StringIO()
 
-speedtest_cli.speedtest()
+# taken from /usr/local/bin/speedtest-cli
+sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+speedtest_cli.main()
+
 timestamp = datetime.now()
 
 sys.stdout = sysStdout_old
